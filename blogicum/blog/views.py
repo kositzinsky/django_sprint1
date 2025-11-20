@@ -53,18 +53,11 @@ def index(request):
 
 def post_detail(request, post_id):
     template = "blog/detail.html"
-    try:
-        if post_id not in [post["id"] for post in posts]:
-            raise ValueError("Post with this id does not exist")
-        
-        for i in range(len(posts)):
-            if posts[i]["id"] == post_id:
-                context = {"post": posts[post_id]}
-                break
-        return render(request, template_name=template, context=context)
-    except ValueError:
-        return HttpResponseNotFound(request)
-
+    post = next((p for p in posts if p["id"] == post_id), None)
+    if post is None:
+        return HttpResponseNotFound("Страница не найдена")
+    context = {"post": post}
+    return render(request, template_name=template, context=context)
 
 
 def category_posts(request, category_slug):
